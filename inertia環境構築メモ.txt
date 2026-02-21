@@ -1,0 +1,77 @@
+1.docker-compose.ymlのbackendのvolumesをコメントアウトし、ビルドする
+docker-compose build --no-cache
+
+2.コンテナを起動
+docker-compose up
+
+3.backendのコンテナに入り、Laravelをインストール
+cd /var/www/html/
+composer create-project laravel/laravel:^12.0 sample_test
+
+4.コンテナのファイルをローカルに同期させる
+docker cp コンテナID:パス ローカルのパス
+docker cp コンテナID:/usr/local/etc/php /c/inertia/php/
+docker cp コンテナID:/var/www/html/sample_test /c/inertia/backend/
+
+docker cp 480726cc2360:/usr/local/etc/php /c/inertia/php/
+docker cp 480726cc2360:/var/www/html/sample_test /c/inertia/backend/
+
+5.コンテナを停止
+docker-compose stop
+
+6.docker-compose.ymlのbackendのvolumesのコメントアウトを外し、コンテナを起動
+docker-compose up
+
+7.backendのコンテナに入り、mod_rewriteを有効化にする
+cd /var/www/html/sample_test/public/
+a2enmod rewrite
+
+8.php.ini-developmentをコピーし、php.iniを作成し、変更(backendのコンテナに入り修正、ローカルの修正のどちらでもOK)
+cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini
+vi /usr/local/etc/php/php.ini
+[Date]
+date.timezone = "Asia/Tokyo"
+[mbstring]
+mbstring.internal_encoding = "UTF-8"
+mbstring.language = "Japanese"
+
+9.backendのコンテナに入り、Apacheを再起動
+service apache2 restart
+
+10.コンテナを起動
+docker-compose up
+
+表示URL
+http://localhost:8080/
+
+11.バックエンド側の対応
+cd /var/www/html/sample_test
+composer require inertiajs/inertia-laravel
+
+12.フロントエンド側の対応
+cd /var/www/html/sample_test
+apt-get install -y npm
+npm install
+npm -v
+npm install @inertiajs/react react react-dom @vitejs/plugin-react
+npm i -D @vitejs/plugin-react
+
+■エラー対応
+The stream or file "/var/www/html/sample_test/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied The exception occurred while attempting to log
+上記のエラーが出た場合は、下記を実行した
+cd /var/www/html/sample_test/storage/logs
+chmod 0777 laravel.log
+
+■inertia関連で修正したファイル
+backend/sample_test/vite.config.js
+backend/sample_test/resources/js/app.jsx
+backend/sample_test/resources/js/layouts/Authenticated.jsx
+backend/sample_test/resources/views/app.blade.php
+
+■基本的なファイル
+backend/sample_test/routes/web.php
+backend/sample_test/app/Http/Controllers/TopController.php
+backend/sample_test/resources/views/top/index.blade.php
+backend/sample_test/resources/js/Pages/Top/Inertia.jsx
+
+
