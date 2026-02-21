@@ -1,0 +1,27 @@
+version: '3'
+services:
+    backend:
+        build:
+            context: .
+            dockerfile: ./docker/backend/Dockerfile
+        container_name: "modan_backend2"
+        privileged: true
+        ports:
+            - "8080:80"
+            - "5173:5173"
+        volumes:
+            - ./apache/default.conf:/etc/apache2/sites-enabled/000-default.conf
+            - ./backend/sample_test:/var/www/html/sample_test
+            - ./php/php:/usr/local/etc/php
+    db:
+        image: mysql:9.6.0
+        container_name: "modan_mysql2"
+        ports:
+            - "3306:3306"
+        volumes:
+            - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+        command: --default-authentication-plugin=mysql_native_password
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: testhoge
+            TZ: Asia/Tokyo
