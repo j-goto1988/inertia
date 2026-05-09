@@ -1,25 +1,25 @@
 ## 概要
-Inertiaにはクライアントサイドルーティング機能はなく、APIも不要。
-これまでと同じようにコントローラーとページビューを構築するだけでOK
+Inertiaにはクライアントサイドルーティング機能はなく、APIも不要<br>
+これまでと同じようにコントローラーとページビューを構築するだけでOK<br>
 
-Inertiaはフレームワークではなく、サーバーサイドとクライアントサイドをつなぐ接着剤
-サーバーサイド→Laravel、Rails、Phoenix、Django
-クライアントサイド→React、Vue、Svelte
+Inertiaはフレームワークではなく、サーバーサイドとクライアントサイドをつなぐ接着剤<br>
+サーバーサイド→Laravel、Rails、Phoenix、Django<br>
+クライアントサイド→React、Vue、Svelte<br>
 
-コントローラーを作成し、データベースからデータを取得し（ORMを介して）、ビューをレンダリング
-Inertiaのビューは、React、Vue、またはSvelteで記述されたJavaScriptページコンポーネント
+コントローラーを作成し、データベースからデータを取得し（ORMを介して）、ビューをレンダリング<br>
+Inertiaのビューは、React、Vue、またはSvelteで記述されたJavaScriptページコンポーネント<br>
 
-Inertiaはアプリケーションのビューレイヤーを置き換える
+Inertiaはアプリケーションのビューレイヤーを置き換える<br>
 
-PHPやRubyテンプレートによるサーバーサイドレンダリングの代わりに、アプリケーションから返されるビューはJavaScriptページコンポーネントになる
+PHPやRubyテンプレートによるサーバーサイドレンダリングの代わりに、アプリケーションから返されるビューはJavaScriptページコンポーネントになる<br>
 
-ぺージ全体を再読み込みすることなくページ遷移を行うことができる
-<Link>という通常のアンカーリンクを軽量にラップしたコンポーネントを使用して実現される
-Inertiaの<Link>をクリックすると、Inertiaが通常のページ遷移を止め、代わりにXHRを介して遷移を行う
-JavaScriptからはrouter.visit()を使うことで、<Link>と同様の遷移を行うことができる
+ぺージ全体を再読み込みすることなくページ遷移を行うことができる<br>
+<Link>という通常のアンカーリンクを軽量にラップしたコンポーネントを使用して実現される<br>
+Inertiaの<Link>をクリックすると、Inertiaが通常のページ遷移を止め、代わりにXHRを介して遷移を行う<br>
+JavaScriptからはrouter.visit()を使うことで、<Link>と同様の遷移を行うことができる<br>
 
-InertiaがXHRリクエストを送信すると、サーバーはそれがInertiaからのリクエストであることを検知し、完全なHTMLレスポンスを返す代わりに、JavaScriptページコンポーネント名とデータ（props）を含むJSONレスポンスを返す
-その後、Inertiaは以前のページコンポーネントを新しいページコンポーネントに動的に置き換え、ブラウザの履歴状態を更新する
+InertiaがXHRリクエストを送信すると、サーバーはそれがInertiaからのリクエストであることを検知し、完全なHTMLレスポンスを返す代わりに、JavaScriptページコンポーネント名とデータ（props）を含むJSONレスポンスを返す<br>
+その後、Inertiaは以前のページコンポーネントを新しいページコンポーネントに動的に置き換え、ブラウザの履歴状態を更新する<br>
 
 <Link>クリック
  ↓
@@ -44,45 +44,45 @@ Laravel → 土台HTML + JSON → React → 表示
 
 ## プロトコル
 ### HTMLレスポンス
-最初のリクエストは、Inertia専用のヘッダーを含まない通常のブラウザリクエストとして処理される
-HTMLには、Reactが描画するための空の場所（div）と、最初に表示するページのデータ（JSON）が含まれている
-Inertiaはそのデータを使ってReactを起動し、画面を表示する
-初期レスポンスはHTMLだが、InertiaはJavaScriptページコンポーネントをサーバーサイドレンダリングしない
+最初のリクエストは、Inertia専用のヘッダーを含まない通常のブラウザリクエストとして処理される<br>
+HTMLには、Reactが描画するための空の場所（div）と、最初に表示するページのデータ（JSON）が含まれている<br>
+Inertiaはそのデータを使ってReactを起動し、画面を表示する<br>
+初期レスポンスはHTMLだが、InertiaはJavaScriptページコンポーネントをサーバーサイドレンダリングしない<br>
 
 ### Inertiaレスポンス
-Inertiaが起動した後のリクエストは、特別なヘッダー（X-Inertia）を付けて送信される
-このヘッダーを見たサーバーは、HTMLの代わりにJSONを返す
+Inertiaが起動した後のリクエストは、特別なヘッダー（X-Inertia）を付けて送信される<br>
+このヘッダーを見たサーバーは、HTMLの代わりにJSONを返す<br>
 
-<Link>やrouter.visit()がX-Inertiaヘッダーを付与し、そのヘッダーをもとにサーバーがInertiaリクエストかどうかを判定している
+<Link>やrouter.visit()がX-Inertiaヘッダーを付与し、そのヘッダーをもとにサーバーがInertiaリクエストかどうかを判定している<br>
 
 ### リクエストヘッダー
-X-Inertia→X-Inertiaリクエストかの判定で、trueならJSONを返しfalseならHTMLを返す
-X-Inertia-Version→JSやCSSのバージョン管理で、バージョンが違う場合はHTMLを強制リロードする
-X-Inertia-Partial-Data→partial reloadで使用し、必要なデータだけ取得する
-X-Inertia-Partial-Component→どのページのデータかを判定する
-X-Requested-With→非同期通信（Ajax）であることを示す
+X-Inertia→X-Inertiaリクエストかの判定で、trueならJSONを返しfalseならHTMLを返す<br>
+X-Inertia-Version→JSやCSSのバージョン管理で、バージョンが違う場合はHTMLを強制リロードする<br>
+X-Inertia-Partial-Data→partial reloadで使用し、必要なデータだけ取得する<br>
+X-Inertia-Partial-Component→どのページのデータかを判定する<br>
+X-Requested-With→非同期通信（Ajax）であることを示す<br>
 
 ### レスポンスヘッダー
-X-Inertia→trueなら正しいInertiaレスポンス
-Vary→URLが同じなので、Inertiaかどうかでキャッシュ分ける
-X-Inertia-Location→強制的にフルリロードさせる
+X-Inertia→trueなら正しいInertiaレスポンス<br>
+Vary→URLが同じなので、Inertiaかどうかでキャッシュ分ける<br>
+X-Inertia-Location→強制的にフルリロードさせる<br>
 
 ### 仕組みの便利な図
 https://inertiajs.com/docs/v3/core-concepts/the-protocol
 
 ## アセットのバージョン管理
-JS/CSSが更新されたら、強制的にページをリロードする仕組み
+JS/CSSが更新されたら、強制的にページをリロードする仕組み<br>
 
 1. サーバーがアセットのバージョンを持つ
-初回HTMLレスポンスの中に埋め込まれるページオブジェクトにもversionが入っており、InertiaレスポンスのJSONにもversionがある
+初回HTMLレスポンスの中に埋め込まれるページオブジェクトにもversionが入っており、InertiaレスポンスのJSONにもversionがある<br>
 
 2. クライアントが自分のバージョンを送る
-Inertiaが起動したあとのリクエストでは、クライアントはX-Inertia-Versionヘッダーを付けて送信する
+Inertiaが起動したあとのリクエストでは、クライアントはX-Inertia-Versionヘッダーを付けて送信する<br>
 
 3. サーバーが比較する
-サーバーは受け取ったX-Inertia-Versionと、自分が持つ最新のversionを比べる
-一致していれば、そのまま通常のInertia JSONレスポンスを返す
-不一致なら、このままJSONだけ返しても古いJSで壊れる可能性があると判断し、通常のHTML読み込みに戻して揃え直す
+サーバーは受け取ったX-Inertia-Versionと、自分が持つ最新のversionを比べる<br>
+一致していれば、そのまま通常のInertia JSONレスポンスを返す<br>
+不一致なら、このままJSONだけ返しても古いJSで壊れる可能性があると判断し、通常のHTML読み込みに戻して揃え直す<br>
 
 Inertiaリクエスト
 ↓
@@ -99,8 +99,8 @@ HTMLを再取得
 最新JS/CSSで起動し直す
 
 ## Partial Reloads
-必要なデータだけ再取得する仕組み
-propsの差分更新をし、再描画の影響を最小化
+必要なデータだけ再取得する仕組み<br>
+propsの差分更新をし、再描画の影響を最小化<br>
 
 ### 部分的なデータ
 部分的な再読み込みを実行するには、router.visitのonlyオプションを指定して、サーバーが返すデータを指定
@@ -136,8 +136,8 @@ return Inertia::render('Users/Index', [
 ]);
 ```
 
-Inertiaはリクエスト時に「どのデータが必要か」を判断し、そのデータだけを後から実行する
-そのため、不要な処理を避けることができ、多くのオプションデータを持つページでもパフォーマンスが向上する
+Inertiaはリクエスト時に「どのデータが必要か」を判断し、そのデータだけを後から実行する<br>
+そのため、不要な処理を避けることができ、多くのオプションデータを持つページでもパフォーマンスが向上する<br>
 
 さらに、Inertia::optional()を使うと、明示的に要求されたときだけデータを返し、それ以外の場合は一切実行されないようにできる
 ```js
@@ -177,23 +177,22 @@ onlyで指定しないと実行されない
 | Inertia::always(fn () => User::all()) | 必ず含まれる | 必ず含まれる | 毎回実行 |
 
 
-表の通常アクセスは、Linkやrouter.visitの場合のこと
-表のpartial reloadは、partial reload時にonlyで指定されたら含まれる場合のこと
-
+表の通常アクセスは、Linkやrouter.visitの場合のこと<br>
+表のpartial reloadは、partial reload時にonlyで指定されたら含まれる場合のこと<br>
 
 
 ### エラーの保存
-LaravelのInertiaでは、エラー情報は常にレスポンスに含まれる（Inertia::always()のような扱い）
-そのため、partial reloadでバリデーションが実行されていない場合でも、空のエラーが返されると、既存のエラーは上書きされて消えてしまう
+LaravelのInertiaでは、エラー情報は常にレスポンスに含まれる（Inertia::always()のような扱い）<br>
+そのため、partial reloadでバリデーションが実行されていない場合でも、空のエラーが返されると、既存のエラーは上書きされて消えてしまう<br>
 もし既存のエラーを保持したい場合は、preserveErrorsオプションを使う
 
 ### Once Propsとの組み合わせ
-once()を付けたデータは最初のリクエスト時にだけ取得され、その後の遷移では再度サーバーから取得されず、クライアントに保存された値が使われる。
+once()を付けたデータは最初のリクエスト時にだけ取得され、その後の遷移では再度サーバーから取得されず、クライアントに保存された値が使われる<br>
 
 ## instant visits
-サーバーの返答を待たずに、先に画面を切り替える
-先にコンポーネントだけ表示して、あとからpropsを入れる
-instant visitsを使うには、Linkに遷移先のコンポーネント名（component）を指定する
+サーバーの返答を待たずに、先に画面を切り替える<br>
+先にコンポーネントだけ表示して、あとからpropsを入れる<br>
+instant visitsを使うには、Linkに遷移先のコンポーネント名（component）を指定する<br>
 ```js
 import { Link } from "@inertiajs/react";
 <Link href="/dashboard" component="Dashboard">
