@@ -14,31 +14,31 @@ Inertiaはアプリケーションのビューレイヤーを置き換える<br>
 PHPやRubyテンプレートによるサーバーサイドレンダリングの代わりに、アプリケーションから返されるビューはJavaScriptページコンポーネントになる<br>
 
 ぺージ全体を再読み込みすることなくページ遷移を行うことができる<br>
-<Link>という通常のアンカーリンクを軽量にラップしたコンポーネントを使用して実現される<br>
-Inertiaの<Link>をクリックすると、Inertiaが通常のページ遷移を止め、代わりにXHRを介して遷移を行う<br>
-JavaScriptからはrouter.visit()を使うことで、<Link>と同様の遷移を行うことができる<br>
+\<Link>という通常のアンカーリンクを軽量にラップしたコンポーネントを使用して実現される<br>
+Inertiaの\<Link>をクリックすると、Inertiaが通常のページ遷移を止め、代わりにXHRを介して遷移を行う<br>
+JavaScriptからはrouter.visit()を使うことで、\<Link>と同様の遷移を行うことができる<br>
 
 InertiaがXHRリクエストを送信すると、サーバーはそれがInertiaからのリクエストであることを検知し、完全なHTMLレスポンスを返す代わりに、JavaScriptページコンポーネント名とデータ（props）を含むJSONレスポンスを返す<br>
 その後、Inertiaは以前のページコンポーネントを新しいページコンポーネントに動的に置き換え、ブラウザの履歴状態を更新する<br>
 
-<Link>クリック
- ↓
-通常の遷移を止める（preventDefault）
- ↓
-fetch（ajax）でLaravelにリクエスト
- ↓
-LaravelがJSON返す（component + props）
- ↓
-Inertiaがページコンポーネントを解決 reactのコンポーネントを特定している
- ↓
-Reactにpropsを渡す
- ↓
-Reactが再描画
+\<Link>クリック<br>
+ ↓<br>
+通常の遷移を止める（preventDefault）<br>
+ ↓<br>
+fetch（ajax）でLaravelにリクエスト<br>
+ ↓<br>
+LaravelがJSON返す（component + props）<br>
+ ↓<br>
+Inertiaがページコンポーネントを解決 reactのコンポーネントを特定している<br>
+ ↓<br>
+Reactにpropsを渡す<br>
+ ↓<br>
+Reactが再描画<br>
 
-通常
+通常<br>
 Laravel → 完成HTML → 表示
 
-Inertia
+Inertia<br>
 Laravel → 土台HTML + JSON → React → 表示
 
 
@@ -53,7 +53,7 @@ Inertiaはそのデータを使ってReactを起動し、画面を表示する<b
 Inertiaが起動した後のリクエストは、特別なヘッダー（X-Inertia）を付けて送信される<br>
 このヘッダーを見たサーバーは、HTMLの代わりにJSONを返す<br>
 
-<Link>やrouter.visit()がX-Inertiaヘッダーを付与し、そのヘッダーをもとにサーバーがInertiaリクエストかどうかを判定している<br>
+\<Link>やrouter.visit()がX-Inertiaヘッダーを付与し、そのヘッダーをもとにサーバーがInertiaリクエストかどうかを判定している<br>
 
 ### リクエストヘッダー
 X-Inertia→X-Inertiaリクエストかの判定で、trueならJSONを返しfalseならHTMLを返す<br>
@@ -73,30 +73,30 @@ https://inertiajs.com/docs/v3/core-concepts/the-protocol
 ## アセットのバージョン管理
 JS/CSSが更新されたら、強制的にページをリロードする仕組み<br>
 
-1. サーバーがアセットのバージョンを持つ
+1. サーバーがアセットのバージョンを持つ<br>
 初回HTMLレスポンスの中に埋め込まれるページオブジェクトにもversionが入っており、InertiaレスポンスのJSONにもversionがある<br>
 
-2. クライアントが自分のバージョンを送る
+2. クライアントが自分のバージョンを送る<br>
 Inertiaが起動したあとのリクエストでは、クライアントはX-Inertia-Versionヘッダーを付けて送信する<br>
 
-3. サーバーが比較する
+3. サーバーが比較する<br>
 サーバーは受け取ったX-Inertia-Versionと、自分が持つ最新のversionを比べる<br>
 一致していれば、そのまま通常のInertia JSONレスポンスを返す<br>
 不一致なら、このままJSONだけ返しても古いJSで壊れる可能性があると判断し、通常のHTML読み込みに戻して揃え直す<br>
 
-Inertiaリクエスト
-↓
-サーバー「バージョン違う」
-↓
-409 Conflict + X-Inertia-Locationを返す
-↓
-Inertiaクライアントがそれを受ける
-↓
-window.locationで通常のフルページ遷移
-↓
-HTMLを再取得
-↓
-最新JS/CSSで起動し直す
+Inertiaリクエスト<br>
+↓<br>
+サーバー「バージョン違う」<br>
+↓<br>
+409 Conflict + X-Inertia-Locationを返す<br>
+↓<br>
+Inertiaクライアントがそれを受ける<br>
+↓<br>
+window.locationで通常のフルページ遷移<br>
+↓<br>
+HTMLを再取得<br>
+↓<br>
+最新JS/CSSで起動し直す<br>
 
 ## Partial Reloads
 必要なデータだけ再取得する仕組み<br>
@@ -153,21 +153,21 @@ return Inertia::render('Users/Index', [
 ]);
 ```
 
-① 通常
-'users' => User::all()
-常に実行
+① 通常<br>
+'users' => User::all()<br>
+常に実行<br>
 
-② Lazy
-'users' => fn () => User::all()
-必要なときだけ実行
+② Lazy<br>
+'users' => fn () => User::all()<br>
+必要なときだけ実行<br>
 
-③ optional
-'users' => Inertia::optional(fn () => User::all())
-onlyで指定しないと実行されない
+③ optional<br>
+'users' => Inertia::optional(fn () => User::all())<br>
+onlyで指定しないと実行されない<br>
 
-④ always
-'users' => Inertia::always(User::all())
-必ず毎回実行
+④ always<br>
+'users' => Inertia::always(User::all())<br>
+必ず毎回実行<br>
 
 | 書き方 | 通常アクセス | partial reload | User::all()の実行 |
 | ---- | ---- | ---- | ---- |
@@ -200,13 +200,13 @@ import { Link } from "@inertiajs/react";
 </Link>;
 ```
 
-<Link>クリック
-↓
-即座に画面切り替え（仮）
-↓
-裏でサーバー通信
-↓
-データ届いたら更新
+\<Link>クリック<br>
+↓<br>
+即座に画面切り替え（仮）<br>
+↓<br>
+裏でサーバー通信<br>
+↓<br>
+データ届いたら更新<br>
 
 
 https://inertiajs.com/?utm_source=chatgpt.com
