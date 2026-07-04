@@ -20,7 +20,7 @@ class Iterable {} // NG
 rand()/srand()がmt_rand()/mt_srand()のエイリアスになり、rand()、shuffle()、str_shuffle()、array_rand()の結果が変わる可能性がある
 
 #### $str[] = $x が致命的エラー
-文字列に対して空のインデックス演算子を使うとfatalになる
+文字列に対して空のインデックス演算子を使うとfatalになる<br>
 PHP7.0までは配列に変換されていた
 ```PHP
 $str = '';
@@ -28,21 +28,21 @@ $str[] = 'a'; // PHP 7.1以降NG
 ```
 
 #### ソート結果の同値要素の順番
-比較結果が同じ要素の並び順が変わる可能性がある
+比較結果が同じ要素の並び順が変わる可能性がある<br>
 同値な要素の並び順に依存するコードは書かないようにする
 ```PHP
 usort($items, function ($a, $b) {
     return $a['score'] <=> $b['score'];
 });
 ```
-同じ score の中で順番に意味があるなら、第二条件を入れる
+同じscoreの中で順番に意味があるなら、第二条件を入れる
 ```PHP
 return [$a['score'], $a['id']] <=> [$b['score'], $b['id']];
 ```
 
 ### PHP 7.1.x で推奨されなくなる機能
 #### mcrypt拡張
-PHP7.1で非推奨、PHP7.2でコアから削除予定とされている
+PHP7.1で非推奨、PHP7.2でコアから削除予定とされている<br>
 代替はOpenSSL
 
 #### mb_ereg_replace()/mb_eregi_replace()のe修飾子
@@ -50,7 +50,7 @@ mb_ereg_replace()とmb_eregi_replace()のパターン修飾子eが非推奨
 
 ### 変更された関数
 #### parse_url()が厳格化
-PHP7.1でparse_url()がRFC3986対応でより厳格になっている
+PHP7.1でparse_url()がRFC3986対応でより厳格になっている<br>
 URL解析まわりは要注意
 
 #### session_start()失敗時の挙動変更
@@ -67,14 +67,14 @@ PHP7.1では、数値でない文字列を+ - * / %などで計算するとE_WAR
 PHP7.1以降、$thisをユーザー定義変数として使ったり再代入したりできない
 
 #### serialize_precisionの変更
-serialize_precisionのデフォルトが-1になっている
+serialize_precisionのデフォルトが-1になっている<br>
 浮動小数点をJSONやシリアライズで扱っている場合、表示桁が変わる可能性がある
 
 
 ## PHP7.2
 ### 下位互換性のない変更点
 #### count(null)でWarning
-count($value)で$valueがnull/文字列/数値/CountableでないオブジェクトだとE_WARNINGが出る
+count($value)で$valueがnull/文字列/数値/CountableでないオブジェクトだとE_WARNINGが出る<br>
 PHP7.2からcount()/sizeof()はcountableでない型に警告を出す
 対策
 ```PHP
@@ -94,7 +94,7 @@ PHP7.2ではE_WARNINGになり、将来はErrorになる
 PHP7.2からobjectはクラス・trait・interface名として使えない
 
 #### array_unique($array, SORT_STRING)の数値キー
-PHP7.2からarray_unique()の内部処理が変わり、数値インデックスが以前と変わる可能性がある
+PHP7.2からarray_unique()の内部処理が変わり、数値インデックスが以前と変わる可能性がある<br>
 順番やキーに意味がある場合は注意
 ```PHP
 $result = array_values(array_unique($array, SORT_STRING));
@@ -119,7 +119,7 @@ date_parse()/date_parse_from_format()のzoneが「分」ではなく「秒」、
 while (list($key, $value) = each($array)) {
 }
 ```
-foreachに置き換え
+foreachに置き換え<br>
 PHP7.2で非推奨
 
 #### create_function()
@@ -140,14 +140,14 @@ spl_autoload_register()に置き換える
 ```PHP
 $array[key]
 ```
-みたいな書き方
+みたいな書き方<br>
 未定義定数の場合、PHP7.2からE_WARNINGになる
 
 #### assert()に文字列を渡す
 ```PHP
 assert('$x > 0');
 ```
-文字列評価なので危険
+文字列評価なので危険<br>
 boolean式にする
 ```PHP
 assert($x > 0);
@@ -155,7 +155,7 @@ assert($x > 0);
 
 ### その他の変更
 #### mcryptがPHPコアから外れた
-PHP7.2でmcrypt拡張はPHPコアからPECLへ移動した
+PHP7.2でmcrypt拡張はPHPコアからPECLへ移動した<br>
 mcryptライブラリは2007年から更新されておらず、使用は推奨できないため、OpenSSLまたはSodiumを使う
 
 #### session_module_name("user")
@@ -165,7 +165,7 @@ mcryptライブラリは2007年から更新されておらず、使用は推奨�
 ## PHP7.3
 ### 下位互換性のない変更点
 #### switch内のcontinue
-PHPではswitch内のcontinueは実質breakと同じ扱いだが、PHP7.3から警告が出る
+PHPではswitch内のcontinueは実質breakと同じ扱いだが、PHP7.3から警告が出る<br>
 外側のwhile/foreachを続けたいならcontinue2にする
 
 #### compact()に未定義変数
@@ -175,7 +175,7 @@ PHP7.3から、compact()に未定義変数を渡すとNoticeが出る
 PHP7.3でheredoc/nowdocの構文が柔軟になった代わりに、文字列内に終了ラベルっぽい行があると解釈が変わる可能性がある
 
 #### ArrayAccessの数値文字列キー
-ArrayAccess実装オブジェクトで"123"が123に暗黙変換される
+ArrayAccess実装オブジェクトで"123"が123に暗黙変換される<br>
 配列自体には影響ない
 
 ### PHP 7.3.x で推奨されなくなる機能
@@ -183,11 +183,11 @@ ArrayAccess実装オブジェクトで"123"が123に暗黙変換される
 strpos()、strstr()、strrchr()などで、needleに文字列以外を渡すのが非推奨になっている
 
 #### 大文字小文字を区別しない定数
-define()の第3引数trueが非推奨
+define()の第3引数trueが非推奨<br>
 定数は大文字小文字を区別する前提に寄せるべき
 
 #### fgetss()/gzgetss()/SplFileObject::fgetss()
-HTMLタグ除去しながら1行読む系
+HTMLタグ除去しながら1行読む系<br>
 非推奨なので、使っていたらfgets()+strip_tags()に置き換える
 
 #### FILTER_FLAG_SCHEME_REQUIRED/FILTER_FLAG_HOST_REQUIRED
@@ -204,7 +204,7 @@ json_encode()/json_decode()で失敗時にJsonExceptionを投げられるよう�
 setcookie()、setrawcookie()、session_set_cookie_params()が配列形式の$optionsを受け取れるようになり、samesiteも指定できる
 
 #### PCREがPCRE2へ変更
-正規表現エンジンがPCRE2になり、既存の正規表現で一部挙動が変わる可能性がある
+正規表現エンジンがPCRE2になり、既存の正規表現で一部挙動が変わる可能性がある<br>
 特に文字クラス内の範囲指定が厳密になっている
 
 #### preg_quote()が#もエスケープ
@@ -220,16 +220,16 @@ PHP7.3ではデフォルトの転送モードがbinaryになっている
 PHP7.4では、null/bool/int/float/resourceを配列のようにアクセスすると警告が出る
 
 #### fnが予約語
-PHP7.4からアロー関数用にfnが予約語になった
+PHP7.4からアロー関数用にfnが予約語になった<br>
 関数名・クラス名として使えない
 
 #### fread()/fwrite()の失敗時戻り値
-失敗時にfalseを返すようになった
-以前は空文字列や0を返すことがあった
+失敗時にfalseを返すようになった<br>
+以前は空文字列や0を返すことがあった<br>
 if (!$result)だと、0バイト書き込みと失敗を混同しやすいので、=== falseが安全
 
 #### openssl_random_pseudo_bytes()
-エラー時に例外を投げるようになった
+エラー時に例外を投げるようになった<br>
 今後はrandom_bytes()の方が基本
 
 #### DateIntervalの比較
