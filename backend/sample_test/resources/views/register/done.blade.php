@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>登録完了</h1>
+    <p>
+    会員登録が完了しました。
+    </p>
+</body>
+</html>

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TopController;
 use App\Http\Controllers\SampleController;
+use App\Http\Controllers\RegisterController;
 
 
 Route::get('/', function () {
@@ -19,3 +20,9 @@ Route::get('/sample/sample5', [SampleController::class, 'sample5']);
 Route::get('/sample/sample6', [SampleController::class, 'sample6']);
 Route::get('/sample/sample7', [SampleController::class, 'sample7']);
 Route::get('/sample/sample8', [SampleController::class, 'sample8']);
+
+Route::get('/register/input', [RegisterController::class, 'input']);
+Route::post('/register/confirm', [RegisterController::class, 'confirm']);
+Route::post('/register/store', [RegisterController::class, 'store']);
+Route::post('/register/back', [RegisterController::class, 'back']);
+Route::get('/register/done', [RegisterController::class, 'done']);

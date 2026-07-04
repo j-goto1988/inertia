@@ -47,6 +47,7 @@ http://localhost:8080/
 11.バックエンド側の対応
 cd /var/www/html/sample_test
 composer require inertiajs/inertia-laravel
+composer require barryvdh/laravel-debugbar --dev
 
 12.フロントエンド側の対応
 cd /var/www/html/sample_test
