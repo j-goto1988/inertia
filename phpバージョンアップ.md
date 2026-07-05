@@ -46,7 +46,8 @@ PHP7.1で非推奨、PHP7.2でコアから削除予定とされている<br>
 代替はOpenSSL
 
 #### mb_ereg_replace()/mb_eregi_replace()のe修飾子
-mb_ereg_replace()とmb_eregi_replace()のパターン修飾子eが非推奨
+mb_ereg_replace()とmb_eregi_replace()のパターン修飾子eが非推奨<br>
+パターン修飾子は第4引数で、eは置換結果をPHPコードとして評価していた
 
 ### 変更された関数
 #### parse_url()が厳格化
@@ -68,6 +69,7 @@ PHP7.1以降、$thisをユーザー定義変数として使ったり再代入し
 
 #### serialize_precisionの変更
 serialize_precisionのデフォルトが-1になっている<br>
+以前は17だった<br>
 浮動小数点をJSONやシリアライズで扱っている場合、表示桁が変わる可能性がある
 
 
@@ -99,7 +101,28 @@ PHP7.2からarray_unique()の内部処理が変わり、数値インデックス
 ```PHP
 $result = array_values(array_unique($array, SORT_STRING));
 ```
-のように、必要なら明示的に詰め直す
+のように、必要なら明示的に詰め直す<br>
+下記の場合の挙動が変わる
+```PHP
+$array = [0, 0];
+$result = array_unique($array, SORT_STRING);
+$result[] = 1;
+var_dump($result);
+```
+PHP7.1
+```PHP
+[
+    0 => 0,
+    2 => 1,
+]
+```
+PHP7.2
+```PHP
+[
+    0 => 0,
+    1 => 1,
+]
+```
 
 #### number_format()が-0を返さない
 以前は-0が出ることがあったが、PHP7.2では0になる
@@ -123,7 +146,15 @@ foreachに置き換え<br>
 PHP7.2で非推奨
 
 #### create_function()
-eval() のラッパーなのでセキュリティ的にも危険で、無名関数へ置き換え推奨
+eval() のラッパーなのでセキュリティ的にも危険で、無名関数へ置き換え推奨<br>
+変更前
+```PHP
+$fn = create_function(
+    '$a, $b',
+    'return $a + $b;'
+);
+```
+変更後
 ```PHP
 $fn = function ($a, $b) {
     return $a + $b;
@@ -172,7 +203,22 @@ PHPではswitch内のcontinueは実質breakと同じ扱いだが、PHP7.3から�
 PHP7.3から、compact()に未定義変数を渡すとNoticeが出る
 
 #### heredoc/nowdocの終了ラベル
-PHP7.3でheredoc/nowdocの構文が柔軟になった代わりに、文字列内に終了ラベルっぽい行があると解釈が変わる可能性がある
+PHP7.3でheredoc/nowdocの構文が柔軟になった代わりに、文字列内に終了ラベルっぽい行があると解釈が変わる可能性がある<br>
+下記の例
+```PHP
+$str = <<<FOO
+abcdefg
+    FOO
+FOO;
+```
+PHP7.2の文字列は下記になる
+```PHP
+abcdefg
+    FOO
+```
+PHP7.3はエラーになる<br>
+終了ラベルをインデントできるため、FOOを終了ラベルと判断し、FOO;というコードが残るため<br>
+終了ラベルとして使う文字列を、本文に出てこないものにする<br>
 
 #### ArrayAccessの数値文字列キー
 ArrayAccess実装オブジェクトで"123"が123に暗黙変換される<br>
@@ -208,7 +254,8 @@ setcookie()、setrawcookie()、session_set_cookie_params()が配列形式の$opt
 特に文字クラス内の範囲指定が厳密になっている
 
 #### preg_quote()が#もエスケープ
-PHP7.3から preg_quote()が#もエスケープする
+PHP7.3から preg_quote()が#もエスケープする<br>
+正規表現の特殊文字を自動で\を付けてエスケープする関数
 
 #### FTPのデフォルト転送モードがbinaryに変更
 PHP7.3ではデフォルトの転送モードがbinaryになっている
@@ -242,7 +289,8 @@ PASSWORD_DEFAULTなどが数値ではなく文字列になった
 ArrayObjectに対するget_object_vars()の返り方が変わっている
 
 #### BCMathに"32foo"みたいな値
-不完全な数値で警告が出る
+不完全な数値で警告が出る<br>
+BCMathは小数を文字列として正確に計算するための拡張
 
 ### PHP 7.4.x で推奨されなくなる機能
 #### implode() の引数順
@@ -278,7 +326,7 @@ $a ? $b : $c ? $d : $e;
 $a ? $b : ($c ? $d : $e);
 ```
 
-#### array_key_exists() にオブジェクト
+#### array_key_exists()にオブジェクト
 ダメな例
 ```PHP
 array_key_exists('name', $object);
