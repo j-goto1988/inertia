@@ -1,4 +1,85 @@
 ## PHP7.1
+### 新機能
+#### nullable な型
+パラメータや戻り値の型宣言で、型の前にクエスチョンマークをつけると、nullableであることを指定できる
+```PHP
+function testReturnA(): ?string
+{
+    return 'elePHPant';
+}
+function test(?string $name)
+{
+    var_dump($name);
+}
+```
+
+#### void 関数
+戻り値の型をvoidと宣言した関数は、関数内でのreturn文を省略するか、あるいは空のreturnを使う必要がある
+
+#### 対称的な配列の分解
+配列の短縮構文[]を使って、代入用に配列の値を取り出せるようになり、list()の代替として使える
+```PHP
+$data = [
+    [1, 'Tom'],
+    [2, 'Fred'],
+];
+[$id1, $name1] = $data[0];
+```
+
+#### クラス定数のアクセス範囲指定
+クラス定数のアクセス範囲を指定できるようになった
+
+#### 例外処理における複数の例外の catch
+ひとつのcatchブロックで複数の例外を扱えるようになり、|を使って指定
+```PHP
+try {
+    // 何かのコード
+} catch (FirstException | SecondException $e) {
+    // FirstException と SecondException をこのブロックで処理します
+}
+```
+
+#### list() におけるキーのサポート
+list()またはその短縮版である[]構文の内部でキーを指定できるようになった
+```PHP
+$data = [
+    ["id" => 1, "name" => 'Tom'],
+    ["id" => 2, "name" => 'Fred'],
+];
+list("id" => $id1, "name" => $name1) = $data[0];
+["id" => $id1, "name" => $name1] = $data[0];
+```
+
+#### 負の文字列オフセットのサポート
+文字列操作関数のうちオフセット指定のできるものすべてについて、負のオフセットを指定できるようになった<br>
+負のオフセットは、文字列の末尾からのオフセットと解釈される
+```PHP
+var_dump("abcdef"[-2]); // 最後から2番目
+var_dump(strpos("aabbcc", "b", -3)); // 最後から3番目
+```
+結果は下記のようになる
+```PHP
+string (1) "e"
+int(3)
+```
+
+### 新しい関数
+#### is_iterable()
+iterable型であることをチェック
+
+#### Closure::fromCallable()
+callableをClosure（無名関数オブジェクト）に変換する
+
+#### session_create_id()
+新しいセッションIDを作成
+
+### 新しいグローバル定数
+#### FILTER_FLAG_EMAIL_UNICODE
+@より前（ローカル部）にUnicode文字を許可する
+
+#### IMAGETYPE_WEBP
+画像がWebP形式であることを表す定数
+
 ### 下位互換性のない変更点
 #### 関数の引数不足がErrorになる
 PHP7.0まではwarningだったものが、PHP7.1以降はArgumentCountErrorになる
@@ -74,6 +155,73 @@ serialize_precisionのデフォルトが-1になっている<br>
 
 
 ## PHP7.2
+### 新機能
+#### object 型
+object型が新たに導入された
+```PHP
+function test(object $obj) : object
+{
+    return new SplQueue();
+}
+test(new stdClass());
+```
+
+#### 抽象メソッドのオーバーライド
+ある抽象クラスが別の抽象クラスを継承しているときに、抽象メソッドの宣言を変更できるようになった機能<br>
+引数はより広く受け取れる型（反変）に変更可能<br>
+戻り値はより具体的な型（共変）に変更可能
+```PHP
+abstract class A
+{
+    abstract function test(string $s);
+}
+abstract class B extends A
+{
+    // オーバーライドしたが、パラメータの反変性や戻り値の共変性は維持している
+    abstract function test($s) : int;
+}
+```
+
+#### パラメータの型の拡大変換
+メソッドをオーバーライドしたりインターフェイスを実装したりする際に、 元のパラメータの型指定を省略できるようになった
+```PHP
+interface A
+{
+    public function Test(array $input);
+}
+class B implements A
+{
+    public function Test($input){} // $inputの型指定を省略
+}
+```
+
+### 新しい関数
+#### spl_object_id()
+オブジェクトごとの一意な整数IDを取得する関数<br>
+実行中のみ有効なIDであり、永続的な識別子としては使えない
+
+#### mb_chr()
+Unicodeコードポイントから文字を生成する関数
+
+#### mb_ord()
+1文字をUnicodeコードポイント（整数）に変換する関数
+
+#### mb_scrub()
+文字列に含まれる不正なバイト列を代替文字に置き換える
+
+### 新しいグローバル定数
+#### PHP_OS_FAMILY
+PHPが動作しているOSの種類を取得する
+
+#### JSON_INVALID_UTF8_IGNORE
+不正なUTF-8の文字を無視
+
+#### JSON_INVALID_UTF8_SUBSTITUTE
+不正なUTF-8の文字を、\0xfffdに変換
+
+#### FILEINFO_EXTENSION
+ファイルから検出したMIMEタイプに対応する適切な拡張子を返す
+
 ### 下位互換性のない変更点
 #### count(null)でWarning
 count($value)で$valueがnull/文字列/数値/CountableでないオブジェクトだとE_WARNINGが出る<br>
@@ -194,6 +342,28 @@ mcryptライブラリは2007年から更新されておらず、使用は推奨�
 
 
 ## PHP7.3
+###  新機能
+#### 配列へ分割して代入する操作が、リファレンスへの代入をサポート
+配列を分解するときに、値のコピーではなく参照（リファレンス）として受け取れるようになった
+```PHP
+$array = [1, 2];
+[$a, &$b] = $array;
+$b = 100;
+```
+
+### 新しく追加された関数
+#### is_countable()
+引数の内容が、arrayまたはCountableを実装したオブジェクトかどうかを調べる
+
+#### array_key_first()
+配列の最初のキーを返し、内部的な配列のポインタに影響を与えない
+
+#### array_key_last()
+配列の最後のキーを返し、内部的な配列のポインタに影響を与えない
+
+#### hrtime()
+システムの高精度な時刻を取得で、ナノ秒を取得
+
 ### 下位互換性のない変更点
 #### switch内のcontinue
 PHPではswitch内のcontinueは実質breakと同じ扱いだが、PHP7.3から警告が出る<br>
@@ -262,6 +432,91 @@ PHP7.3ではデフォルトの転送モードがbinaryになっている
 
 
 ## PHP7.4
+### 新機能
+#### 型付きプロパティ
+クラスのプロパティは、新たに型宣言をサポート
+
+#### アロー関数
+短く書ける無名関数<br>
+=>の右側に書いた式の結果が自動的に返されるので、returnは不要<br>
+アロー関数は1つの式しか書けないので、複数の式を書く場合は無名関数を使う
+```PHP
+fn (引数) => 戻り値となる式
+```
+アロー関数の場合
+```PHP
+$double = fn($number) => $number * 2;
+echo $double(5); // 10
+```
+無名関数の場合
+```PHP
+$double = function ($number) {
+    return $number * 2;
+};
+echo $double(5); // 10
+```
+=>の右側に書いた式の結果が自動的に返されるので、returnは不要<br>
+アロー関数の外側にある変数をuseなしで自動的に値渡しで取り込む、無名関数はuseが必要
+```PHP
+$taxRate = 0.1;
+$calculateTax = fn($price) => $price * $taxRate;
+```
+```PHP
+$taxRate = 0.1;
+$calculateTax = function ($price) use ($taxRate) {
+    return $price * $taxRate;
+};
+```
+アロー関数内から外側の変数を書き換えられないので、その場合は通常の無名関数で参照を使う
+```PHP
+$count = 0;
+$increment = fn() => $count++;
+$increment();
+echo $count; // 0
+```
+```PHP
+$count = 0;
+$increment = function () use (&$count) {
+    $count++;
+};
+$increment();
+echo $count; // 1
+```
+
+#### Null 合体代入演算子
+変数がnullまたは未定義のときだけ値を代入する
+```PHP
+// Null合体代入演算子ができる前
+if (!isset($array['key'])) {
+    $array['key'] = computeDefault();
+}
+
+// Null合体代入演算子は上記と同じ
+$array['key'] ??= computeDefault();
+```
+
+#### 配列内での値のアンパック
+配列の要素を、別の配列の中へそのまま展開する機能
+```PHP
+$parts = ['apple', 'pear'];
+$fruits = ['banana', 'orange', ...$parts, 'watermelon'];
+// ['banana', 'orange', 'apple', 'pear', 'watermelon'];
+```
+
+#### strip_tags() をタグ名の配列とともに使う
+許可するタグの配列も受け入れるようになった
+
+### 新しく追加された関数
+#### mb_str_split()
+マルチバイト文字列を受取り、文字の配列を返す
+
+#### password_algos()
+登録済みのパスワードハッシュアルゴリズムのIDの完全な一覧を、文字列の配列として返す
+
+#### openssl_x509_verify()
+証明書が公開鍵に対応する秘密鍵で署名されたかどうかを検証
+
+
 ### 下位互換性のない変更点
 #### 配列でない値を配列アクセス
 PHP7.4では、null/bool/int/float/resourceを配列のようにアクセスすると警告が出る
